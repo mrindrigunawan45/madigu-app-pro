@@ -3,26 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MaDiGu Pro - Supabase Edition</title>
+    <title>MaDiGu Pro - Full Supabase</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         :root { --p: #2563eb; --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; --danger: #ef4444; --success: #22c55e; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; color: #1e293b; overflow-x: hidden; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; color: #1e293b; }
         .container { max-width: 600px; margin: auto; padding: 15px; box-sizing: border-box; }
         .card { background: var(--white); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 15px; }
         h3 { margin-top: 0; color: var(--p); border-bottom: 2px solid #eff6ff; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; font-size: 14px; outline: none; }
         button { width: 100%; padding: 14px; background: var(--p); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         
-        /* Radio Button Styling */
+        /* Style Radio Buttons */
         .st-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
         .radio-group { display: flex; gap: 8px; }
         .radio-group input[type="radio"] { display: none; }
         .radio-box { border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; min-width: 30px; text-align: center; }
         .radio-group input[type="radio"]:checked + .radio-box { background: var(--p); color: white; border-color: var(--p); }
 
+        /* Navigation */
         .nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px; background: white; display: flex; border-top: 1px solid var(--border); z-index: 1000; height: 70px; }
         .nav-btn { flex: 1; text-align: center; padding: 12px; font-size: 11px; cursor: pointer; color: #64748b; }
         .nav-btn.active-nav { color: var(--p); font-weight: bold; border-top: 4px solid var(--p); background: #f8fafc; }
@@ -32,16 +33,19 @@
         #login-screen, #app-screen { display: none; }
         .screen-active { display: block !important; }
         #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); display:none; justify-content:center; align-items:center; z-index:9999; font-weight: bold; color: var(--p); }
+        
+        /* Laporan Style */
+        .log-item { border-left: 5px solid var(--p); padding: 10px; margin-bottom: 10px; background: #fff; border-radius: 0 8px 8px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
-    <div id="loading">Harap Tunggu...</div>
+    <div id="loading">Memproses...</div>
     
     <div class="container">
         <div id="login-screen">
             <div class="card" style="text-align:center; margin-top:60px;">
                 <h1 style="color:var(--p);">MaDiGu PRO</h1>
-                <p>Database: Supabase (Cloud)</p>
+                <p>Database: Supabase Cloud</p>
                 <input type="text" id="user" placeholder="Username">
                 <input type="password" id="pass" placeholder="Password">
                 <button onclick="doLogin()">MASUK</button>
@@ -49,31 +53,41 @@
         </div>
 
         <div id="app-screen">
-            <div class="card" style="background: var(--p); color: white;">
+            <div class="card" style="background: var(--p); color: white; border-radius: 0 0 12px 12px; margin-top: -15px;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div><b id="user-n"></b><br><small id="school-n"></small></div>
-                    <button onclick="logout()" style="width:auto; padding:5px 12px; background:rgba(255,255,255,0.2); font-size: 10px;">Keluar</button>
+                    <button onclick="logout()" style="width:auto; padding:5px 12px; background:rgba(255,255,255,0.2); font-size: 10px; border:1px solid white;">Logout</button>
                 </div>
             </div>
 
             <div id="tab-input" class="tab-content">
                 <div class="card">
-                    <h3>📝 Jurnal Pro</h3>
+                    <h3>📝 Input Jurnal</h3>
                     <input type="date" id="tgl">
-                    <select id="mapel"><option value="">Mata Pelajaran</option></select>
+                    <select id="mapel"><option value="">Pilih Mapel</option></select>
                     <select id="kelas" onchange="getStudents()"><option value="">Pilih Kelas</option></select>
-                    <textarea id="materi" rows="3" placeholder="Isi materi pembelajaran..."></textarea>
+                    <textarea id="materi" rows="3" placeholder="Materi yang diajarkan..."></textarea>
                     
                     <div id="student-list-jurnal" style="margin-top:15px;"></div>
                     
-                    <button onclick="saveJurnalSupabase()" id="btn-save-jurnal" style="margin-top:20px; background:var(--success); display:none;">SIMPAN KE SUPABASE</button>
+                    <button onclick="saveJurnalSupabase()" id="btn-save-jurnal" style="margin-top:20px; background:var(--success); display:none;">SIMPAN DATA</button>
+                </div>
+            </div>
+
+            <div id="tab-laporan" class="tab-content">
+                <div class="card">
+                    <h3>📊 Riwayat Jurnal</h3>
+                    <div id="list-laporan">
+                        <p style="text-align:center; color:#64748b;">Klik tombol di bawah untuk memuat data</p>
+                    </div>
+                    <button onclick="loadLaporan()" style="background:#64748b; margin-top:10px;">REFRESH DATA</button>
                 </div>
             </div>
 
             <div class="nav">
                 <div class="nav-btn" id="n-input" onclick="switchTab('input')">📝 Jurnal</div>
-                <div class="nav-btn" onclick="alert('Fitur Nilai menyusul')">🏆 Nilai</div>
-                <div class="nav-btn" onclick="alert('Fitur Laporan menyusul')">📊 Laporan</div>
+                <div class="nav-btn" id="n-nilai" onclick="alert('Fitur Nilai segera hadir!')">🏆 Nilai</div>
+                <div class="nav-btn" id="n-laporan" onclick="switchTab('laporan'); loadLaporan();">📊 Laporan</div>
             </div>
         </div>
     </div>
@@ -97,7 +111,7 @@
     async function doLogin() {
         const u = document.getElementById('user').value;
         const p = document.getElementById('pass').value;
-        if(!u || !p) return alert("Isi username dan password!");
+        if(!u || !p) return alert("Username/Password kosong!");
         
         document.getElementById('loading').style.display='flex';
         try {
@@ -107,8 +121,8 @@
                 GURU = res; 
                 localStorage.setItem("madigu_session", JSON.stringify(res)); 
                 startApp(); 
-            } else alert("Login Gagal! Cek kembali akun Anda.");
-        } catch(e) { alert("Error Login: " + e.message); }
+            } else alert("Login Gagal!");
+        } catch(e) { alert("Error: " + e.message); }
         document.getElementById('loading').style.display='none';
     }
 
@@ -116,7 +130,7 @@
         document.getElementById('login-screen').classList.remove('screen-active');
         document.getElementById('app-screen').classList.add('screen-active');
         document.getElementById('user-n').innerText = GURU.nama;
-        document.getElementById('school-n').innerText = "ID: " + GURU.schoolId;
+        document.getElementById('school-n').innerText = "School ID: " + GURU.schoolId;
         document.getElementById('tgl').value = new Date().toISOString().split('T')[0];
         initData();
         switchTab('input');
@@ -141,11 +155,11 @@
         STUDENTS = await r.json();
         document.getElementById('loading').style.display='none';
 
-        let h = '<b style="display:block; margin-bottom:10px; border-top:1px solid #eee; pt-10">Presensi Siswa</b>';
+        let h = '<b style="display:block; margin:15px 0 10px 0; color:#64748b;">Daftar Absensi</b>';
         STUDENTS.forEach((n, i) => {
             h += `
             <div class="st-row">
-                <span style="font-size:13px;">${n}</span>
+                <span style="font-size:13px; font-weight:500;">${n}</span>
                 <div class="radio-group">
                     ${['H', 'S', 'I', 'A'].map(v => `
                         <label>
@@ -166,39 +180,57 @@
         const kelas = document.getElementById('kelas').value;
         const materi = document.getElementById('materi').value;
 
-        if(!tgl || !mapel || !kelas || !materi) return alert("Mohon lengkapi semua data!");
+        if(!tgl || !mapel || !kelas || !materi) return alert("Lengkapi semua kolom!");
 
-        const dataToInsert = STUDENTS.map((nama, i) => {
-            const statusVal = document.querySelector(`input[name="abs-${i}"]:checked`).value;
-            return {
-                tanggal: tgl,
-                guru: GURU.nama,
-                mapel: mapel,
-                kelas: kelas,
-                materi: materi,
-                nama_siswa: nama,
-                status: statusVal,
-                school_id: GURU.schoolId
-            };
-        });
+        const dataToInsert = STUDENTS.map((nama, i) => ({
+            tanggal: tgl,
+            guru: GURU.nama,
+            mapel: mapel,
+            kelas: kelas,
+            materi: materi,
+            nama_siswa: nama,
+            status: document.querySelector(`input[name="abs-${i}"]:checked`).value,
+            school_id: GURU.schoolId
+        }));
 
         document.getElementById('loading').style.display = 'flex';
-
         try {
-            const { data, error } = await _supabase
-                .from('jurnal')
-                .insert(dataToInsert);
-
+            const { error } = await _supabase.from('jurnal').insert(dataToInsert);
             if (error) throw error;
-
-            alert("BERHASIL! Data jurnal telah masuk ke Supabase.");
+            alert("Data Berhasil Disimpan!");
             location.reload();
         } catch (err) {
-            console.error(err);
             alert("Gagal simpan: " + err.message);
         } finally {
             document.getElementById('loading').style.display = 'none';
         }
+    }
+
+    async function loadLaporan() {
+        document.getElementById('loading').style.display = 'flex';
+        try {
+            const { data, error } = await _supabase
+                .from('jurnal')
+                .select('*')
+                .eq('school_id', GURU.schoolId)
+                .order('id', { ascending: false })
+                .limit(50);
+
+            if (error) throw error;
+            
+            let h = '';
+            if(data.length === 0) h = '<p style="text-align:center;">Belum ada data.</p>';
+            data.forEach(d => {
+                h += `
+                <div class="log-item">
+                    <div style="font-size:10px; color:var(--p); font-weight:bold;">${d.tanggal} | ${d.kelas}</div>
+                    <div style="font-size:13px; font-weight:bold; margin:3px 0;">${d.nama_siswa} (${d.status})</div>
+                    <div style="font-size:11px; color:#64748b;">${d.mapel}: ${d.materi}</div>
+                </div>`;
+            });
+            document.getElementById('list-laporan').innerHTML = h;
+        } catch (e) { alert("Gagal muat laporan: " + e.message); }
+        document.getElementById('loading').style.display = 'none';
     }
 
     function switchTab(t) {
