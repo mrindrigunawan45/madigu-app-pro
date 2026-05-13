@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MaDiGu Pro - Supabase Version</title>
+    <title>MaDiGu Pro - Supabase Edition</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
@@ -16,17 +16,21 @@
         input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; font-size: 14px; outline: none; }
         button { width: 100%; padding: 14px; background: var(--p); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         
+        /* Radio Button Styling */
+        .st-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+        .radio-group { display: flex; gap: 8px; }
+        .radio-group input[type="radio"] { display: none; }
+        .radio-box { border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; min-width: 30px; text-align: center; }
+        .radio-group input[type="radio"]:checked + .radio-box { background: var(--p); color: white; border-color: var(--p); }
+
         .nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px; background: white; display: flex; border-top: 1px solid var(--border); z-index: 1000; height: 70px; }
         .nav-btn { flex: 1; text-align: center; padding: 12px; font-size: 11px; cursor: pointer; color: #64748b; }
         .nav-btn.active-nav { color: var(--p); font-weight: bold; border-top: 4px solid var(--p); background: #f8fafc; }
         
         .tab-content { display: none; }
         .tab-content.active { display: block !important; }
-        
         #login-screen, #app-screen { display: none; }
         .screen-active { display: block !important; }
-
-        .st-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
         #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); display:none; justify-content:center; align-items:center; z-index:9999; font-weight: bold; color: var(--p); }
     </style>
 </head>
@@ -54,31 +58,32 @@
 
             <div id="tab-input" class="tab-content">
                 <div class="card">
-                    <h3>📝 Jurnal (Supabase)</h3>
+                    <h3>📝 Jurnal Pro</h3>
                     <input type="date" id="tgl">
                     <select id="mapel"><option value="">Mata Pelajaran</option></select>
-                    <select id="kelas" onchange="getStudents('jurnal')"><option value="">Pilih Kelas</option></select>
-                    <textarea id="materi" rows="3" placeholder="Materi..."></textarea>
-                    <div id="student-list-jurnal"></div>
+                    <select id="kelas" onchange="getStudents()"><option value="">Pilih Kelas</option></select>
+                    <textarea id="materi" rows="3" placeholder="Isi materi pembelajaran..."></textarea>
+                    
+                    <div id="student-list-jurnal" style="margin-top:15px;"></div>
+                    
                     <button onclick="saveJurnalSupabase()" id="btn-save-jurnal" style="margin-top:20px; background:var(--success); display:none;">SIMPAN KE SUPABASE</button>
                 </div>
             </div>
 
             <div class="nav">
                 <div class="nav-btn" id="n-input" onclick="switchTab('input')">📝 Jurnal</div>
-                <div class="nav-btn" onclick="alert('Fitur ini akan segera di-update ke Supabase')">🏆 Nilai</div>
-                <div class="nav-btn" onclick="alert('Fitur ini akan segera di-update ke Supabase')">📊 Laporan</div>
+                <div class="nav-btn" onclick="alert('Fitur Nilai menyusul')">🏆 Nilai</div>
+                <div class="nav-btn" onclick="alert('Fitur Laporan menyusul')">📊 Laporan</div>
             </div>
         </div>
     </div>
 
 <script>
-    // --- SETTING API ---
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQbt3pIMm0VX8V398bRw8qBJ00xxCI4o9jmq6-vL5dcx3hH9obSs5hcSXD_dTVg0QC/exec"; // Tetap pakai ini untuk Login/Get Siswa (opsional)
+    // --- KONFIGURASI API ---
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQbt3pIMm0VX8V398bRw8qBJ00xxCI4o9jmq6-vL5dcx3hH9obSs5hcSXD_dTVg0QC/exec"; 
     const SUPABASE_URL = 'https://ocakjidyndcojeapdsop.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_sBVisHxIzGA1pEtlChR5pw_pcF-J3nm';
     
-    // Inisialisasi Supabase
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let GURU = {}; let STUDENTS = [];
@@ -90,25 +95,28 @@
     };
 
     async function doLogin() {
-        // Kita masih pakai backend GAS untuk login agar praktis sementara
         const u = document.getElementById('user').value;
         const p = document.getElementById('pass').value;
+        if(!u || !p) return alert("Isi username dan password!");
+        
         document.getElementById('loading').style.display='flex';
-        const r = await fetch(SCRIPT_URL, { method:'POST', body: JSON.stringify({action:"login", user:u, pass:p}) });
-        const res = await r.json();
+        try {
+            const r = await fetch(SCRIPT_URL, { method:'POST', body: JSON.stringify({action:"login", user:u, pass:p}) });
+            const res = await r.json();
+            if(res && res.success) { 
+                GURU = res; 
+                localStorage.setItem("madigu_session", JSON.stringify(res)); 
+                startApp(); 
+            } else alert("Login Gagal! Cek kembali akun Anda.");
+        } catch(e) { alert("Error Login: " + e.message); }
         document.getElementById('loading').style.display='none';
-        if(res && res.success) { 
-            GURU = res; 
-            localStorage.setItem("madigu_session", JSON.stringify(res)); 
-            startApp(); 
-        } else alert("Login Gagal!");
     }
 
     function startApp() {
         document.getElementById('login-screen').classList.remove('screen-active');
         document.getElementById('app-screen').classList.add('screen-active');
         document.getElementById('user-n').innerText = GURU.nama;
-        document.getElementById('school-n').innerText = GURU.schoolId;
+        document.getElementById('school-n').innerText = "ID: " + GURU.schoolId;
         document.getElementById('tgl').value = new Date().toISOString().split('T')[0];
         initData();
         switchTab('input');
@@ -125,40 +133,54 @@
         document.getElementById('mapel').innerHTML = m;
     }
 
-    async function getStudents(type) {
+    async function getStudents() {
         const k = document.getElementById('kelas').value;
+        if(!k) return;
+        document.getElementById('loading').style.display='flex';
         const r = await fetch(SCRIPT_URL, { method:'POST', body: JSON.stringify({action:"getStudents", kelas:k, schoolId:GURU.schoolId}) });
         STUDENTS = await r.json();
-        let h = '<b>Presensi Siswa</b>';
+        document.getElementById('loading').style.display='none';
+
+        let h = '<b style="display:block; margin-bottom:10px; border-top:1px solid #eee; pt-10">Presensi Siswa</b>';
         STUDENTS.forEach((n, i) => {
-            h += `<div class="st-row"><span>${n}</span>
-                <select id="abs-${i}" style="width:70px; margin:0;"><option value="H">H</option><option value="S">S</option><option value="I">I</option><option value="A">A</option></select>
+            h += `
+            <div class="st-row">
+                <span style="font-size:13px;">${n}</span>
+                <div class="radio-group">
+                    ${['H', 'S', 'I', 'A'].map(v => `
+                        <label>
+                            <input type="radio" name="abs-${i}" value="${v}" ${v === 'H' ? 'checked' : ''}>
+                            <div class="radio-box">${v}</div>
+                        </label>
+                    `).join('')}
+                </div>
             </div>`;
         });
         document.getElementById('student-list-jurnal').innerHTML = h;
         document.getElementById('btn-save-jurnal').style.display = 'block';
     }
 
-    // --- FUNGSI BARU: SIMPAN KE SUPABASE ---
     async function saveJurnalSupabase() {
         const tgl = document.getElementById('tgl').value;
         const mapel = document.getElementById('mapel').value;
         const kelas = document.getElementById('kelas').value;
         const materi = document.getElementById('materi').value;
 
-        if(!tgl || !mapel || !kelas || !materi) return alert("Lengkapi data!");
+        if(!tgl || !mapel || !kelas || !materi) return alert("Mohon lengkapi semua data!");
 
-        // Siapkan data untuk banyak baris sekaligus
-        const dataToInsert = STUDENTS.map((nama, i) => ({
-            tanggal: tgl,
-            guru: GURU.nama,
-            mapel: mapel,
-            kelas: kelas,
-            materi: materi,
-            nama_siswa: nama,
-            status: document.getElementById(`abs-${i}`).value,
-            school_id: GURU.schoolId
-        }));
+        const dataToInsert = STUDENTS.map((nama, i) => {
+            const statusVal = document.querySelector(`input[name="abs-${i}"]:checked`).value;
+            return {
+                tanggal: tgl,
+                guru: GURU.nama,
+                mapel: mapel,
+                kelas: kelas,
+                materi: materi,
+                nama_siswa: nama,
+                status: statusVal,
+                school_id: GURU.schoolId
+            };
+        });
 
         document.getElementById('loading').style.display = 'flex';
 
@@ -169,10 +191,11 @@
 
             if (error) throw error;
 
-            alert("BERHASIL! Data tersimpan di Supabase.");
+            alert("BERHASIL! Data jurnal telah masuk ke Supabase.");
             location.reload();
         } catch (err) {
-            alert("Gagal simpan ke Supabase: " + err.message);
+            console.error(err);
+            alert("Gagal simpan: " + err.message);
         } finally {
             document.getElementById('loading').style.display = 'none';
         }
