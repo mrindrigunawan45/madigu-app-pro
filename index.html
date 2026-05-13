@@ -3,326 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaDiGu Pro - Supabase Version</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <style>
-        :root { --p: #2563eb; --s: #10b981; --bg: #f1f5f9; --white: #ffffff; --border: #e2e8f0; --text: #1e293b; }
-        * { box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; color: var(--text); }
+        :root { --p: #2563eb; --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; --danger: #ef4444; --success: #22c55e; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; color: #1e293b; overflow-x: hidden; }
+        .container { max-width: 600px; margin: auto; padding: 15px; box-sizing: border-box; }
+        .card { background: var(--white); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        h3 { margin-top: 0; color: var(--p); border-bottom: 2px solid #eff6ff; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; font-size: 14px; outline: none; }
+        button { width: 100%; padding: 14px; background: var(--p); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         
-        /* Sidebar & Header */
-        .sidebar { position: fixed; left: -260px; top: 0; width: 260px; height: 100%; background: var(--white); box-shadow: 2px 0 10px rgba(0,0,0,0.1); transition: 0.3s; z-index: 1000; padding-top: 20px; }
-        .sidebar.open { left: 0; }
-        .sidebar-item { padding: 15px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; font-weight: 500; color: #64748b; }
-        .sidebar-item:hover { background: #f8fafc; color: var(--p); }
-        .sidebar-item.active { background: #eff6ff; color: var(--p); border-right: 4px solid var(--p); }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 900; }
+        .nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px; background: white; display: flex; border-top: 1px solid var(--border); z-index: 1000; height: 70px; }
+        .nav-btn { flex: 1; text-align: center; padding: 12px; font-size: 11px; cursor: pointer; color: #64748b; }
+        .nav-btn.active-nav { color: var(--p); font-weight: bold; border-top: 4px solid var(--p); background: #f8fafc; }
         
-        header { background: var(--p); color: white; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 800; height: 70px; }
-        .header-logo { height: 55px; width: auto; background: white; border-radius: 8px; padding: 5px; }
-
-        .container { max-width: 800px; margin: auto; padding: 15px; padding-bottom: 80px; }
-        .card { background: var(--white); padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); }
-        
-        /* Logo Styles Diperbesar */
-        .login-logo { width: 260px; height: auto; margin-bottom: 10px; border-radius: 12px; object-fit: contain; }
-        .sidebar-logo { width: 140px; height: auto; border-radius: 10px; margin-bottom: 10px; background: #fff; padding: 5px; }
-
-        input, select, textarea { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid var(--border); border-radius: 10px; font-size: 15px; outline: none; transition: 0.3s; }
-        input:focus, select:focus { border-color: var(--p); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-        
-        button { width: 100%; padding: 15px; background: var(--p); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 16px; }
-        button:active { transform: scale(0.97); }
-        .btn-success { background: var(--s); }
-        .btn-download { background: #6366f1; width: auto; padding: 10px 20px; font-size: 13px; margin-bottom: 15px; }
-
-        /* Tabel Rekap */
-        .table-responsive { overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid var(--border); }
-        table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; }
-        th, td { border: 1px solid var(--border); padding: 12px; text-align: center; }
-        th { background: #f8fafc; font-weight: 700; color: var(--text); }
-        .text-left { text-align: left; padding-left: 15px; font-weight: 500; }
-
-        /* Absensi & Nilai Input */
-        .st-row { padding: 15px 0; border-bottom: 1px solid #f1f5f9; }
-        .absensi-group { display: flex; gap: 10px; margin-top: 10px; }
-        .abs-opt { flex: 1; }
-        .abs-opt input { display: none; }
-        .abs-opt label { display: block; text-align: center; padding: 12px; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; background: #f8fafc; font-weight: 700; }
-        .abs-opt input:checked + label { background: var(--p); color: white; border-color: var(--p); }
-        
-        .nilai-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }
-        .nilai-input { width: 85px; text-align: center; font-weight: bold; border: 2px solid var(--p) !important; margin: 0 !important; color: var(--p); }
-
-        .hidden { display: none !important; }
-        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); display:none; justify-content:center; align-items:center; z-index:9999; }
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .hist-card { border-left: 5px solid var(--p); padding: 15px; background: #f8fafc; margin-bottom: 12px; border-radius: 0 10px 10px 0; border: 1px solid #e2e8f0; border-left-width: 5px; font-size: 14px; }
+        .tab-content.active { display: block !important; }
+        
+        #login-screen, #app-screen { display: none; }
+        .screen-active { display: block !important; }
+
+        .st-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); display:none; justify-content:center; align-items:center; z-index:9999; font-weight: bold; color: var(--p); }
     </style>
 </head>
 <body>
-
-    <div id="loading"><i class="fas fa-spinner fa-spin fa-3x" style="color:var(--p)"></i></div>
-
-    <div id="login-screen">
-        <div class="container" style="margin-top: 50px;">
-            <div class="card" style="text-align: center;">
-                <img src="https://drive.google.com/thumbnail?id=1FWj7nowDdr3UFBKNbXxp4pOMQ2daCMKw&sz=w500" class="login-logo" alt="MaDiGu Logo">
+    <div id="loading">Harap Tunggu...</div>
+    
+    <div class="container">
+        <div id="login-screen">
+            <div class="card" style="text-align:center; margin-top:60px;">
+                <h1 style="color:var(--p);">MaDiGu PRO</h1>
+                <p>Database: Supabase (Cloud)</p>
                 <input type="text" id="user" placeholder="Username">
                 <input type="password" id="pass" placeholder="Password">
-                <button onclick="doLogin()">MASUK APLIKASI</button>
+                <button onclick="doLogin()">MASUK</button>
             </div>
         </div>
-    </div>
 
-    <div id="app-screen" class="hidden">
-        <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-        <nav class="sidebar" id="sidebar">
-            <div style="padding: 20px; text-align: center;">
-                <img src="https://drive.google.com/thumbnail?id=1FWj7nowDdr3UFBKNbXxp4pOMQ2daCMKw&sz=w300" class="sidebar-logo">
-                <br><b id="user-name" style="color:var(--p); font-size: 16px;"></b><br><small id="school-id" style="color:#64748b;"></small>
+        <div id="app-screen">
+            <div class="card" style="background: var(--p); color: white;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div><b id="user-n"></b><br><small id="school-n"></small></div>
+                    <button onclick="logout()" style="width:auto; padding:5px 12px; background:rgba(255,255,255,0.2); font-size: 10px;">Keluar</button>
+                </div>
             </div>
-            <div class="sidebar-item active" onclick="switchTab('jurnal')"><i class="fas fa-edit"></i> Jurnal & Absen</div>
-            <div class="sidebar-item" onclick="switchTab('nilai')"><i class="fas fa-plus-circle"></i> Input Nilai</div>
-            <div class="sidebar-item" onclick="switchTab('rekap-nilai')"><i class="fas fa-trophy"></i> Rekap Nilai</div>
-            <div class="sidebar-item" onclick="switchTab('riwayat')"><i class="fas fa-history"></i> Riwayat Jurnal</div>
-            <div class="sidebar-item" onclick="switchTab('rekap')"><i class="fas fa-chart-bar"></i> Rekap Absen</div>
-            <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
-            <div class="sidebar-item" onclick="logout()" style="color:#ef4444;"><i class="fas fa-sign-out-alt"></i> Logout</div>
-        </nav>
 
-        <header>
-            <div onclick="toggleMenu()" style="cursor:pointer;"><i class="fas fa-bars fa-2x"></i></div>
-            <img src="https://drive.google.com/thumbnail?id=1FWj7nowDdr3UFBKNbXxp4pOMQ2daCMKw&sz=w200" class="header-logo" alt="Logo">
-            <div id="header-title" style="font-weight:bold; font-size: 16px;">Jurnal Harian</div>
-        </header>
-
-        <div class="container">
-            <div id="tab-jurnal" class="tab-content active">
+            <div id="tab-input" class="tab-content">
                 <div class="card">
+                    <h3>📝 Jurnal (Supabase)</h3>
                     <input type="date" id="tgl">
-                    <select id="mapel-jurnal"><option value="">Pilih Mata Pelajaran</option></select>
-                    <select id="kelas-jurnal" onchange="getStudents('jurnal')"><option value="">Pilih Kelas</option></select>
-                    <textarea id="materi" rows="3" placeholder="Materi / Pokok Bahasan..."></textarea>
-                    <div id="list-siswa-jurnal"></div>
-                    <button id="btn-save-jurnal" class="hidden btn-success" onclick="saveJurnal()">SIMPAN JURNAL</button>
+                    <select id="mapel"><option value="">Mata Pelajaran</option></select>
+                    <select id="kelas" onchange="getStudents('jurnal')"><option value="">Pilih Kelas</option></select>
+                    <textarea id="materi" rows="3" placeholder="Materi..."></textarea>
+                    <div id="student-list-jurnal"></div>
+                    <button onclick="saveJurnalSupabase()" id="btn-save-jurnal" style="margin-top:20px; background:var(--success); display:none;">SIMPAN KE SUPABASE</button>
                 </div>
             </div>
 
-            <div id="tab-nilai" class="tab-content">
-                <div class="card">
-                    <select id="mapel-nilai"><option value="">Pilih Mata Pelajaran</option></select>
-                    <select id="jenis-nilai">
-                        <option value="">Pilih Jenis Penilaian</option>
-                        <option value="s1">Sumatif 1 (S1)</option><option value="s2">Sumatif 2 (S2)</option>
-                        <option value="s3">Sumatif 3 (S3)</option><option value="s4">Sumatif 4 (S4)</option>
-                        <option value="f1">Formatif 1 (F1)</option><option value="f2">Formatif 2 (F2)</option>
-                        <option value="f3">Formatif 3 (F3)</option><option value="f4">Formatif 4 (F4)</option>
-                        <option value="asts">ASTS</option><option value="asas">ASAS</option>
-                    </select>
-                    <select id="kelas-nilai" onchange="getStudents('nilai')"><option value="">Pilih Kelas</option></select>
-                    <div id="list-siswa-nilai"></div>
-                    <button id="btn-save-nilai" class="hidden" onclick="saveNilai()">SIMPAN NILAI</button>
-                </div>
-            </div>
-
-            <div id="tab-rekap-nilai" class="tab-content">
-                <div class="card">
-                    <select id="mapel-rekap-nilai"><option value="">Pilih Mata Pelajaran</option></select>
-                    <select id="kelas-rekap-nilai" onchange="loadRekapNilai()"><option value="">Pilih Kelas</option></select>
-                    <button id="btn-dl-nilai" class="hidden btn-download" onclick="downloadExcelNilai()"><i class="fas fa-file-excel"></i> Download Excel</button>
-                    <div class="table-responsive" id="area-rekap-nilai"></div>
-                </div>
-            </div>
-
-            <div id="tab-riwayat" class="tab-content">
-                <div class="card">
-                    <button class="btn-download" onclick="downloadHistory()"><i class="fas fa-file-excel"></i> Download Riwayat Excel</button>
-                    <div id="list-riwayat">Memuat data...</div>
-                </div>
-            </div>
-
-            <div id="tab-rekap" class="tab-content">
-                <div class="card">
-                    <select id="rekap-kelas" onchange="loadRekapAbsen()"><option value="">Pilih Kelas</option></select>
-                    <button id="btn-dl-absen" class="hidden btn-download" onclick="downloadExcelAbsen()"><i class="fas fa-file-excel"></i> Download Rekap Absen</button>
-                    <div class="table-responsive" id="area-rekap-absen"></div>
-                </div>
+            <div class="nav">
+                <div class="nav-btn" id="n-input" onclick="switchTab('input')">📝 Jurnal</div>
+                <div class="nav-btn" onclick="alert('Fitur ini akan segera di-update ke Supabase')">🏆 Nilai</div>
+                <div class="nav-btn" onclick="alert('Fitur ini akan segera di-update ke Supabase')">📊 Laporan</div>
             </div>
         </div>
     </div>
 
-    <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQbt3pIMm0VX8V398bRw8qBJ00xxCI4o9jmq6-vL5dcx3hH9obSs5hcSXD_dTVg0QC/exec"; 
-        let GURU = {}; let STUDENTS = []; let DATA_REKAP_ABSEN = []; let DATA_REKAP_NILAI = [];
+<script>
+    // --- SETTING API ---
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQbt3pIMm0VX8V398bRw8qBJ00xxCI4o9jmq6-vL5dcx3hH9obSs5hcSXD_dTVg0QC/exec"; // Tetap pakai ini untuk Login/Get Siswa (opsional)
+    const SUPABASE_URL = 'https://ocakjidyndcojeapdsop.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_sBVisHxIzGA1pEtlChR5pw_pcF-J3nm';
+    
+    // Inisialisasi Supabase
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const clean = (val) => (val === undefined || val === null || val === "" ? "-" : val);
+    let GURU = {}; let STUDENTS = [];
 
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('open');
-            const ov = document.getElementById('overlay');
-            ov.style.display = ov.style.display === 'block' ? 'none' : 'block';
+    window.onload = () => { 
+        const s = localStorage.getItem("madigu_session"); 
+        if(s) { GURU = JSON.parse(s); startApp(); } 
+        else { document.getElementById('login-screen').classList.add('screen-active'); }
+    };
+
+    async function doLogin() {
+        // Kita masih pakai backend GAS untuk login agar praktis sementara
+        const u = document.getElementById('user').value;
+        const p = document.getElementById('pass').value;
+        document.getElementById('loading').style.display='flex';
+        const r = await fetch(SCRIPT_URL, { method:'POST', body: JSON.stringify({action:"login", user:u, pass:p}) });
+        const res = await r.json();
+        document.getElementById('loading').style.display='none';
+        if(res && res.success) { 
+            GURU = res; 
+            localStorage.setItem("madigu_session", JSON.stringify(res)); 
+            startApp(); 
+        } else alert("Login Gagal!");
+    }
+
+    function startApp() {
+        document.getElementById('login-screen').classList.remove('screen-active');
+        document.getElementById('app-screen').classList.add('screen-active');
+        document.getElementById('user-n').innerText = GURU.nama;
+        document.getElementById('school-n').innerText = GURU.schoolId;
+        document.getElementById('tgl').value = new Date().toISOString().split('T')[0];
+        initData();
+        switchTab('input');
+    }
+
+    async function initData() {
+        const r = await fetch(SCRIPT_URL, { method:'POST', body: JSON.stringify({action:"getInitialData", schoolId:GURU.schoolId}) });
+        const res = await r.json();
+        let k = '<option value="">Pilih Kelas</option>';
+        res.daftarKelas.forEach(x => k += `<option>${x}</option>`);
+        document.getElementById('kelas').innerHTML = k;
+        let m = '<option value="">Pilih Mapel</option>';
+        res.daftarMapel.forEach(x => m += `<option>${x}</option>`);
+        document.getElementById('mapel').innerHTML = m;
+    }
+
+    async function getStudents(type) {
+        const k = document.getElementById('kelas').value;
+        const r = await fetch(SCRIPT_URL, { method:'POST', body: JSON.stringify({action:"getStudents", kelas:k, schoolId:GURU.schoolId}) });
+        STUDENTS = await r.json();
+        let h = '<b>Presensi Siswa</b>';
+        STUDENTS.forEach((n, i) => {
+            h += `<div class="st-row"><span>${n}</span>
+                <select id="abs-${i}" style="width:70px; margin:0;"><option value="H">H</option><option value="S">S</option><option value="I">I</option><option value="A">A</option></select>
+            </div>`;
+        });
+        document.getElementById('student-list-jurnal').innerHTML = h;
+        document.getElementById('btn-save-jurnal').style.display = 'block';
+    }
+
+    // --- FUNGSI BARU: SIMPAN KE SUPABASE ---
+    async function saveJurnalSupabase() {
+        const tgl = document.getElementById('tgl').value;
+        const mapel = document.getElementById('mapel').value;
+        const kelas = document.getElementById('kelas').value;
+        const materi = document.getElementById('materi').value;
+
+        if(!tgl || !mapel || !kelas || !materi) return alert("Lengkapi data!");
+
+        // Siapkan data untuk banyak baris sekaligus
+        const dataToInsert = STUDENTS.map((nama, i) => ({
+            tanggal: tgl,
+            guru: GURU.nama,
+            mapel: mapel,
+            kelas: kelas,
+            materi: materi,
+            nama_siswa: nama,
+            status: document.getElementById(`abs-${i}`).value,
+            school_id: GURU.schoolId
+        }));
+
+        document.getElementById('loading').style.display = 'flex';
+
+        try {
+            const { data, error } = await _supabase
+                .from('jurnal')
+                .insert(dataToInsert);
+
+            if (error) throw error;
+
+            alert("BERHASIL! Data tersimpan di Supabase.");
+            location.reload();
+        } catch (err) {
+            alert("Gagal simpan ke Supabase: " + err.message);
+        } finally {
+            document.getElementById('loading').style.display = 'none';
         }
+    }
 
-        function switchTab(t) {
-            document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
-            document.querySelectorAll('.sidebar-item').forEach(x => x.classList.remove('active'));
-            document.getElementById('tab-'+t).classList.add('active');
-            event.currentTarget.classList.add('active');
-            document.getElementById('header-title').innerText = event.currentTarget.innerText;
-            if(t === 'riwayat') loadHistory();
-            toggleMenu();
-        }
+    function switchTab(t) {
+        document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active-nav'));
+        document.getElementById('tab-'+t).classList.add('active');
+        document.getElementById('n-'+t).classList.add('active-nav');
+    }
 
-        async function api(p) {
-            document.getElementById('loading').style.display='flex';
-            try {
-                const r = await fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify(p) });
-                const j = await r.json();
-                document.getElementById('loading').style.display='none';
-                return j;
-            } catch(e) { 
-                document.getElementById('loading').style.display='none';
-                alert("Koneksi gagal. Cek jaringan atau URL script."); 
-            }
-        }
-
-        async function doLogin() {
-            const u = document.getElementById('user').value;
-            const p = document.getElementById('pass').value;
-            if(!u || !p) return alert("Username dan Password wajib diisi!");
-            const res = await api({ action:'login', user:u, pass:p });
-            if(res && res.success) { GURU = res; localStorage.setItem("madigu_pro", JSON.stringify(res)); startApp(); }
-            else alert("Login Gagal! Akun tidak ditemukan.");
-        }
-
-        function startApp() {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('app-screen').classList.remove('hidden');
-            document.getElementById('user-name').innerText = GURU.nama;
-            document.getElementById('school-id').innerText = "Unit: " + GURU.schoolId;
-            document.getElementById('tgl').value = new Date().toISOString().split('T')[0];
-            initData();
-        }
-
-        async function initData() {
-            const res = await api({ action:'getInitialData', schoolId:GURU.schoolId });
-            let k = '<option value="">Pilih Kelas</option>';
-            res.daftarKelas.forEach(x => k += `<option>${x}</option>`);
-            document.getElementById('kelas-jurnal').innerHTML = k;
-            document.getElementById('kelas-nilai').innerHTML = k;
-            document.getElementById('rekap-kelas').innerHTML = k;
-            document.getElementById('kelas-rekap-nilai').innerHTML = k;
-            
-            let m = '<option value="">Pilih Mata Pelajaran</option>';
-            res.daftarMapel.forEach(x => m += `<option>${x}</option>`);
-            document.getElementById('mapel-jurnal').innerHTML = m;
-            document.getElementById('mapel-nilai').innerHTML = m;
-            document.getElementById('mapel-rekap-nilai').innerHTML = m;
-        }
-
-        async function getStudents(type) {
-            const k = document.getElementById(type==='jurnal'?'kelas-jurnal':'kelas-nilai').value;
-            if(!k) return;
-            STUDENTS = await api({ action:'getStudents', kelas:k, schoolId:GURU.schoolId });
-            let html = '';
-            if(type==='jurnal') {
-                STUDENTS.forEach((n,i) => {
-                    html += `<div class="st-row"><b>${n}</b><div class="absensi-group">
-                        <div class="abs-opt"><input type="radio" name="abs-${i}" id="h-${i}" value="H" checked><label for="h-${i}">H</label></div>
-                        <div class="abs-opt"><input type="radio" name="abs-${i}" id="s-${i}" value="S"><label for="s-${i}">S</label></div>
-                        <div class="abs-opt"><input type="radio" name="abs-${i}" id="i-${i}" value="I"><label for="i-${i}">I</label></div>
-                        <div class="abs-opt"><input type="radio" name="abs-${i}" id="a-${i}" value="A"><label for="a-${i}">A</label></div>
-                    </div></div>`;
-                });
-                document.getElementById('list-siswa-jurnal').innerHTML = html;
-                document.getElementById('btn-save-jurnal').classList.remove('hidden');
-            } else {
-                STUDENTS.forEach((n,i) => {
-                    html += `<div class="nilai-row"><span>${n}</span><input type="number" id="v-${i}" class="nilai-input" placeholder="0"></div>`;
-                });
-                document.getElementById('list-siswa-nilai').innerHTML = html;
-                document.getElementById('btn-save-nilai').classList.remove('hidden');
-            }
-        }
-
-        async function saveJurnal() {
-            if(!document.getElementById('mapel-jurnal').value || !document.getElementById('materi').value) return alert("Mapel dan Materi wajib diisi!");
-            const data = STUDENTS.map((n,i) => ({
-                tanggal: document.getElementById('tgl').value, guru: GURU.nama, mapel: document.getElementById('mapel-jurnal').value,
-                kelas: document.getElementById('kelas-jurnal').value, materi: document.getElementById('materi').value,
-                nama: n, status: document.querySelector(`input[name="abs-${i}"]:checked`).value
-            }));
-            const res = await api({ action:'save', data:data, schoolId:GURU.schoolId });
-            if(res.success) { alert("Jurnal Berhasil Disimpan!"); location.reload(); }
-        }
-
-        async function saveNilai() {
-            const jenis = document.getElementById('jenis-nilai').value;
-            const data = STUDENTS.map((n,i) => {
-                let obj = { guru:GURU.nama, mapel:document.getElementById('mapel-nilai').value, kelas:document.getElementById('kelas-nilai').value, nama:n, s1:"", s2:"", s3:"", s4:"", f1:"", f2:"", f3:"", f4:"", asts:"", asas:"", na:0 };
-                obj[jenis] = document.getElementById(`v-${i}`).value;
-                return obj;
-            });
-            const res = await api({ action:'saveNilai', data:data, schoolId:GURU.schoolId });
-            if(res.success) { alert("Nilai Berhasil Disimpan!"); location.reload(); }
-        }
-
-        async function loadHistory() {
-            const res = await api({ action:'getHistory', guru:GURU.nama, schoolId:GURU.schoolId });
-            document.getElementById('list-riwayat').innerHTML = res.map(x => `<div class="hist-card"><b>${x.tgl} - ${x.kelas}</b><br>${x.mapel}<br><small>${x.materi}</small>${x.absen.length?`<br><span style="color:red">Absen: ${x.absen.join(', ')}</span>`:''}</div>`).join('') || 'Belum ada riwayat.';
-        }
-
-        async function downloadHistory() {
-            const res = await api({ action:'getHistory', guru:GURU.nama, schoolId:GURU.schoolId });
-            const rows = res.map(x => ({ "Tanggal": x.tgl, "Kelas": x.kelas, "Mapel": x.mapel, "Materi": x.materi, "Siswa Absen": x.absen.join(', ') }));
-            exportExcel(rows, "Riwayat_Jurnal_" + GURU.nama);
-        }
-
-        async function loadRekapAbsen() {
-            const k = document.getElementById('rekap-kelas').value;
-            DATA_REKAP_ABSEN = await api({ action:'getRekap', kelas:k, schoolId:GURU.schoolId });
-            let h = '<table><tr><th>Nama Siswa</th><th>S</th><th>I</th><th>A</th><th>Hadir %</th></tr>';
-            DATA_REKAP_ABSEN.forEach(r => h += `<tr><td class="text-left">${r.nama}</td><td>${r.s}</td><td>${r.i}</td><td>${r.a}</td><td>${r.p}</td></tr>`);
-            document.getElementById('area-rekap-absen').innerHTML = h + '</table>';
-            document.getElementById('btn-dl-absen').classList.remove('hidden');
-        }
-
-        function downloadExcelAbsen() {
-            const k = document.getElementById('rekap-kelas').value;
-            const rows = DATA_REKAP_ABSEN.map(r => ({ "Nama Siswa": r.nama, "Sakit": r.s, "Izin": r.i, "Alpa": r.a, "Persentase Hadir": r.p }));
-            exportExcel(rows, "Rekap_Absen_" + k);
-        }
-
-        async function loadRekapNilai() {
-            const k = document.getElementById('kelas-rekap-nilai').value;
-            const m = document.getElementById('mapel-rekap-nilai').value;
-            if(!k || !m) return;
-            DATA_REKAP_NILAI = await api({ action:'getRekapNilai', kelas:k, mapel:m, schoolId:GURU.schoolId });
-            let h = '<table><tr><th>Nama</th><th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>F1</th><th>F2</th><th>F3</th><th>F4</th><th>STS</th><th>SAS</th></tr>';
-            DATA_REKAP_NILAI.forEach(r => {
-                h += `<tr><td class="text-left">${clean(r.Nama)}</td><td>${clean(r.S1)}</td><td>${clean(r.S2)}</td><td>${clean(r.S3)}</td><td>${clean(r.S4)}</td><td>${clean(r.F1)}</td><td>${clean(r.F2)}</td><td>${clean(r.F3)}</td><td>${clean(r.F4)}</td><td>${clean(r.ASTS)}</td><td>${clean(r.ASAS)}</td></tr>`;
-            });
-            document.getElementById('area-rekap-nilai').innerHTML = h + '</table>';
-            document.getElementById('btn-dl-nilai').classList.remove('hidden');
-        }
-
-        function downloadExcelNilai() {
-            const k = document.getElementById('kelas-rekap-nilai').value;
-            const m = document.getElementById('mapel-rekap-nilai').value;
-            exportExcel(DATA_REKAP_NILAI, "Rekap_Nilai_" + m + "_" + k);
-        }
-
-        function exportExcel(data, filename) {
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-            XLSX.writeFile(wb, filename + ".xlsx");
-        }
-
-        function logout() { localStorage.clear(); location.reload(); }
-        window.onload = () => { const s = localStorage.getItem("madigu_pro"); if(s) { GURU = JSON.parse(s); startApp(); } };
-    </script>
+    function logout() { localStorage.clear(); location.reload(); }
+</script>
 </body>
 </html>
