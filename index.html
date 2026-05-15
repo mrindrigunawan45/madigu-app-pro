@@ -1,615 +1,514 @@
-# Full Updated index.html (Supabase Compatible)
-
-```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MaDiGu PRO Ultimate - Supabase</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaDiGu PRO Ultimate - Supabase</title>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <style>
-        :root {
-            --p: #2563eb;
-            --bg: #f1f5f9;
-            --white: #ffffff;
-            --border: #e2e8f0;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --text: #1e293b;
-        }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: var(--bg);
-            margin: 0;
-            padding-bottom: 90px;
-            color: var(--text);
-        }
-
-        .container {
-            max-width: 600px;
-            margin: auto;
-            padding: 15px;
-        }
-
-        .card {
-            background: var(--white);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            margin-bottom: 15px;
-        }
-
-        h3 {
-            margin: 0 0 15px 0;
-            color: var(--p);
-            border-bottom: 2px solid #eff6ff;
-            padding-bottom: 8px;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            box-sizing: border-box;
-            outline: none;
-            font-size: 14px;
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            background: var(--p);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .btn-sec {
-            background: #64748b;
-            margin-top: 10px;
-        }
-
-        .btn-del {
-            background: var(--danger);
-            width: auto;
-            padding: 5px 10px;
-            font-size: 10px;
-        }
-
-        .st-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #f1f5f9;
-            gap: 10px;
-        }
-
-        .radio-group {
-            display: flex;
-            gap: 5px;
-        }
-
-        .radio-group input {
-            display: none;
-        }
-
-        .radio-box {
-            border: 1px solid var(--border);
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            min-width: 25px;
-            text-align: center;
-        }
-
-        .radio-group input:checked + .radio-box {
-            background: var(--p);
-            color: white;
-            border-color: var(--p);
-        }
-
-        .log-item {
-            border-left: 5px solid var(--p);
-            padding: 12px;
-            margin-bottom: 10px;
-            background: white;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .log-info {
-            font-size: 11px;
-            color: #64748b;
-        }
-
-        .log-main {
-            font-weight: bold;
-            margin: 5px 0;
-            font-size: 14px;
-        }
-
-        .nav {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 600px;
-            background: white;
-            display: flex;
-            border-top: 1px solid var(--border);
-            z-index: 1000;
-            height: 75px;
-        }
-
-        .nav-btn {
-            flex: 1;
-            text-align: center;
-            padding: 15px 5px;
-            font-size: 10px;
-            cursor: pointer;
-            color: #94a3b8;
-        }
-
-        .active-nav {
-            color: var(--p);
-            font-weight: bold;
-            border-top: 4px solid var(--p);
-            background: #f8fafc;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .active {
-            display: block !important;
-        }
-
-        #loading {
-            position: fixed;
-            top:0;
-            left:0;
-            width:100%;
-            height:100%;
-            background:rgba(255,255,255,0.8);
-            display:none;
-            justify-content:center;
-            align-items:center;
-            z-index:9999;
-            font-weight:bold;
-            color:var(--p);
-        }
-    </style>
+<style>
+:root{
+--p:#2563eb;
+--bg:#f1f5f9;
+--white:#fff;
+--border:#e2e8f0;
+--success:#22c55e;
+--danger:#ef4444;
+}
+body{
+font-family:Segoe UI,sans-serif;
+background:var(--bg);
+margin:0;
+padding-bottom:90px;
+}
+.container{
+max-width:600px;
+margin:auto;
+padding:15px;
+}
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+margin-bottom:15px;
+}
+input,select,textarea,button{
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:8px;
+box-sizing:border-box;
+}
+button{
+background:var(--p);
+color:white;
+border:none;
+font-weight:bold;
+}
+.tab-content{display:none;}
+.active{display:block!important;}
+.nav{
+position:fixed;
+bottom:0;
+left:50%;
+transform:translateX(-50%);
+width:100%;
+max-width:600px;
+display:flex;
+background:white;
+border-top:1px solid #ddd;
+}
+.nav-btn{
+flex:1;
+padding:15px 5px;
+text-align:center;
+cursor:pointer;
+}
+.active-nav{
+background:#eff6ff;
+font-weight:bold;
+color:var(--p);
+}
+.st-row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px 0;
+border-bottom:1px solid #eee;
+gap:10px;
+}
+.radio-group{
+display:flex;
+gap:5px;
+}
+.radio-group input{
+display:none;
+}
+.radio-box{
+border:1px solid #ddd;
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
+}
+.radio-group input:checked + .radio-box{
+background:var(--p);
+color:white;
+}
+</style>
 </head>
-<body>
 
-<div id="loading">Memproses...</div>
+<body>
 
 <div class="container">
 
-    <div id="login-screen" class="tab-content">
-        <div class="card" style="text-align:center; margin-top:50px;">
-            <h1 style="color:var(--p);">MaDiGu PRO</h1>
-            <input type="text" id="user" placeholder="Username">
-            <input type="password" id="pass" placeholder="Password">
-            <button onclick="doLogin()">MASUK SISTEM</button>
-        </div>
-    </div>
+<div id="login-screen" class="tab-content active">
+<div class="card">
+<h2>Login MaDiGu PRO</h2>
 
-    <div id="app-screen" class="tab-content">
+<input type="text" id="user" placeholder="Username">
+<input type="password" id="pass" placeholder="Password">
 
-        <div class="card" style="background:var(--p); color:white;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <b id="user-n"></b><br>
-                    <small id="school-n"></small>
-                </div>
-                <button onclick="logout()" style="width:auto; background:rgba(255,255,255,0.2);">Keluar</button>
-            </div>
-        </div>
+<button onclick="doLogin()">MASUK</button>
+</div>
+</div>
 
-        <div id="tab-input" class="tab-content">
-            <div class="card">
-                <h3>📝 Input Jurnal</h3>
+<div id="app-screen" class="tab-content">
 
-                <input type="date" id="tgl">
+<div class="card">
+<div style="display:flex;justify-content:space-between;">
+<div>
+<b id="user-n"></b><br>
+<small id="school-n"></small>
+</div>
 
-                <select id="mapel">
-                    <option value="">Pilih Mapel</option>
-                </select>
+<button onclick="logout()" style="width:auto;">Logout</button>
+</div>
+</div>
 
-                <select id="kelas" onchange="getStudents('jurnal')">
-                    <option value="">Pilih Kelas</option>
-                </select>
+<div id="tab-input" class="tab-content">
 
-                <textarea id="materi" rows="2" placeholder="Materi..."></textarea>
+<div class="card">
+<h3>Input Jurnal</h3>
 
-                <div id="list-jurnal"></div>
+<input type="date" id="tgl">
 
-                <button onclick="saveJurnal()" id="btn-jurnal" style="display:none; background:var(--success);">
-                    SIMPAN JURNAL
-                </button>
-            </div>
-        </div>
+<select id="mapel">
+<option value="">Pilih Mapel</option>
+</select>
 
-        <div id="tab-nilai" class="tab-content">
-            <div class="card">
-                <h3>🏆 Input Nilai</h3>
+<select id="kelas" onchange="getStudents('jurnal')">
+<option value="">Pilih Kelas</option>
+</select>
 
-                <select id="jenis-nilai">
-                    <option value="s1">S1</option>
-                    <option value="s2">S2</option>
-                    <option value="s3">S3</option>
-                    <option value="s4">S4</option>
-                    <option value="f1">F1</option>
-                    <option value="f2">F2</option>
-                    <option value="f3">F3</option>
-                    <option value="f4">F4</option>
-                    <option value="asts">ASTS</option>
-                    <option value="asas">ASAS</option>
-                </select>
+<textarea id="materi" rows="2" placeholder="Materi"></textarea>
 
-                <select id="mapel-n">
-                    <option value="">Pilih Mapel</option>
-                </select>
+<div id="list-jurnal"></div>
 
-                <select id="kelas-n" onchange="getStudents('nilai')">
-                    <option value="">Pilih Kelas</option>
-                </select>
+<button id="btn-jurnal" onclick="saveJurnal()" style="display:none;background:var(--success)">
+SIMPAN JURNAL
+</button>
 
-                <div id="list-nilai"></div>
+</div>
 
-                <button onclick="saveNilai()" id="btn-nilai" style="display:none; background:var(--success);">
-                    SIMPAN NILAI
-                </button>
-            </div>
-        </div>
+</div>
 
-        <div id="tab-laporan" class="tab-content">
-            <div class="card">
-                <h3>📊 Laporan</h3>
+<div id="tab-nilai" class="tab-content">
 
-                <select id="tipe-laporan" onchange="loadLaporan()">
-                    <option value="jurnal">Riwayat Jurnal</option>
-                    <option value="nilai">Daftar Nilai</option>
-                </select>
+<div class="card">
 
-                <div id="display-laporan"></div>
+<h3>Input Nilai</h3>
 
-                <button onclick="exportExcel()" class="btn-sec" style="background:var(--success);">
-                    DOWNLOAD EXCEL
-                </button>
-            </div>
-        </div>
+<select id="jenis-nilai">
+<option value="s1">S1</option>
+<option value="s2">S2</option>
+<option value="s3">S3</option>
+<option value="s4">S4</option>
+<option value="f1">F1</option>
+<option value="f2">F2</option>
+<option value="f3">F3</option>
+<option value="f4">F4</option>
+<option value="asts">ASTS</option>
+<option value="asas">ASAS</option>
+</select>
 
-        <div class="nav">
-            <div class="nav-btn" id="n-input" onclick="switchTab('input')">📝 JURNAL</div>
-            <div class="nav-btn" id="n-nilai" onclick="switchTab('nilai')">🏆 NILAI</div>
-            <div class="nav-btn" id="n-laporan" onclick="switchTab('laporan'); loadLaporan();">📊 LAPORAN</div>
-        </div>
+<select id="mapel-n">
+<option value="">Pilih Mapel</option>
+</select>
 
-    </div>
+<select id="kelas-n" onchange="getStudents('nilai')">
+<option value="">Pilih Kelas</option>
+</select>
+
+<div id="list-nilai"></div>
+
+<button id="btn-nilai" onclick="saveNilai()" style="display:none;background:var(--success)">
+SIMPAN NILAI
+</button>
+
+</div>
+
+</div>
+
+<div id="tab-laporan" class="tab-content">
+
+<div class="card">
+
+<h3>Laporan</h3>
+
+<select id="tipe-laporan" onchange="loadLaporan()">
+<option value="jurnal">Jurnal</option>
+<option value="nilai">Nilai</option>
+</select>
+
+<div id="display-laporan"></div>
+
+<button onclick="exportExcel()">DOWNLOAD EXCEL</button>
+
+</div>
+
+</div>
+
+<div class="nav">
+<div class="nav-btn" id="n-input" onclick="switchTab('input')">JURNAL</div>
+<div class="nav-btn" id="n-nilai" onclick="switchTab('nilai')">NILAI</div>
+<div class="nav-btn" id="n-laporan" onclick="switchTab('laporan');loadLaporan()">LAPORAN</div>
+</div>
+
+</div>
+
 </div>
 
 <script>
 
-const SUPABASE_URL = 'ISI_URL_SUPABASE';
-const SUPABASE_KEY = 'ISI_ANON_KEY';
+const SUPABASE_URL = 'https://ocakjidyndcojeapdsop.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_sBVisHxIzGA1pEtlChR5pw_pcF-J3nm';
 
-const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const _supabase = supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let GURU = {};
 let STUDENTS = [];
 
-window.onload = () => {
-    const s = localStorage.getItem('madigu_session');
+async function doLogin(){
 
-    if(s) {
-        GURU = JSON.parse(s);
-        startApp();
-    } else {
-        switchTab('login');
-    }
+const username=document.getElementById('user').value;
+const password=document.getElementById('pass').value;
+
+const {data,error}=await _supabase
+.from('users')
+.select('*')
+.eq('username',username)
+.eq('password',password)
+.single();
+
+if(error || !data){
+alert('Login gagal');
+return;
+}
+
+GURU={
+nama:data.nama_lengkap,
+schoolId:data.school_id
 };
 
-async function doLogin() {
+localStorage.setItem('madigu_session',JSON.stringify(GURU));
 
-    const username = document.getElementById('user').value;
-    const password = document.getElementById('pass').value;
+startApp();
 
-    loading(true);
-
-    const { data, error } = await _supabase
-        .from('users')
-        .select('*')
-        .eq('username', username)
-        .eq('password', password)
-        .single();
-
-    loading(false);
-
-    if(error || !data) {
-        alert('Login gagal');
-        return;
-    }
-
-    GURU = {
-        nama: data.nama_lengkap,
-        schoolId: data.school_id,
-        username: data.username
-    };
-
-    localStorage.setItem('madigu_session', JSON.stringify(GURU));
-
-    startApp();
 }
 
-function startApp() {
+function startApp(){
 
-    switchTab('input');
+switchTab('input');
 
-    document.getElementById('user-n').innerText = GURU.nama;
-    document.getElementById('school-n').innerText = GURU.schoolId;
+document.getElementById('user-n').innerText=GURU.nama;
+document.getElementById('school-n').innerText=GURU.schoolId;
 
-    document.getElementById('tgl').value = new Date().toISOString().split('T')[0];
+document.getElementById('tgl').value=
+new Date().toISOString().split('T')[0];
 
-    initData();
+initData();
+
 }
 
-async function initData() {
+window.onload=()=>{
 
-    const { data: kelasData } = await _supabase
-        .from('data')
-        .select('kelas')
-        .eq('school_id', GURU.schoolId);
+const s=localStorage.getItem('madigu_session');
 
-    const kelasUnique = [...new Set(kelasData.map(x => x.kelas))];
-
-    let kelasHTML = '<option value="">Pilih Kelas</option>';
-
-    kelasUnique.forEach(k => {
-        kelasHTML += `<option>${k}</option>`;
-    });
-
-    document.getElementById('kelas').innerHTML = kelasHTML;
-    document.getElementById('kelas-n').innerHTML = kelasHTML;
-
-    const { data: mapelData } = await _supabase
-        .from('mapel')
-        .select('*')
-        .eq('school_id', GURU.schoolId);
-
-    let mapelHTML = '<option value="">Pilih Mapel</option>';
-
-    mapelData.forEach(m => {
-        mapelHTML += `<option>${m.nama_mata_pelajaran}</option>`;
-    });
-
-    document.getElementById('mapel').innerHTML = mapelHTML;
-    document.getElementById('mapel-n').innerHTML = mapelHTML;
+if(s){
+GURU=JSON.parse(s);
+startApp();
 }
 
-async function getStudents(type) {
+};
 
-    const kelas = document.getElementById(type === 'jurnal' ? 'kelas' : 'kelas-n').value;
+async function initData(){
 
-    loading(true);
+const {data:kelasData}=await _supabase
+.from('data')
+.select('kelas')
+.eq('school_id',GURU.schoolId);
 
-    const { data } = await _supabase
-        .from('data')
-        .select('*')
-        .eq('kelas', kelas)
-        .eq('school_id', GURU.schoolId);
+const kelasUnique=[...new Set(kelasData.map(x=>x.kelas))];
 
-    loading(false);
+let k='<option value="">Pilih Kelas</option>';
 
-    STUDENTS = data.map(x => x.nama_siswa);
+kelasUnique.forEach(x=>{
+k+=`<option>${x}</option>`;
+});
 
-    let h = '';
+document.getElementById('kelas').innerHTML=k;
+document.getElementById('kelas-n').innerHTML=k;
 
-    if(type === 'jurnal') {
+const {data:mapelData}=await _supabase
+.from('mapel')
+.select('*')
+.eq('school_id',GURU.schoolId);
 
-        STUDENTS.forEach((n, i) => {
+let m='<option value="">Pilih Mapel</option>';
 
-            h += `
-            <div class="st-row">
-                <span>${n}</span>
-                <div class="radio-group">
-                    ${['H','S','I','A'].map(v => `
-                        <label>
-                            <input type="radio" name="abs-${i}" value="${v}" ${v==='H'?'checked':''}>
-                            <div class="radio-box">${v}</div>
-                        </label>
-                    `).join('')}
-                </div>
-            </div>`;
-        });
+mapelData.forEach(x=>{
+m+=`<option>${x.nama_mata_pelajaran}</option>`;
+});
 
-        document.getElementById('list-jurnal').innerHTML = h;
-        document.getElementById('btn-jurnal').style.display = 'block';
+document.getElementById('mapel').innerHTML=m;
+document.getElementById('mapel-n').innerHTML=m;
 
-    } else {
-
-        STUDENTS.forEach((n, i) => {
-
-            h += `
-            <div class="st-row">
-                <span>${n}</span>
-                <input type="number" id="nil-${i}" style="width:90px;" placeholder="0-100">
-            </div>`;
-        });
-
-        document.getElementById('list-nilai').innerHTML = h;
-        document.getElementById('btn-nilai').style.display = 'block';
-    }
 }
 
-async function saveJurnal() {
+async function getStudents(type){
 
-    const tanggal = document.getElementById('tgl').value;
-    const mapel = document.getElementById('mapel').value;
-    const kelas = document.getElementById('kelas').value;
-    const materi = document.getElementById('materi').value;
+const kelas=document.getElementById(
+type==='jurnal'?'kelas':'kelas-n'
+).value;
 
-    const data = STUDENTS.map((n, i) => ({
-        tanggal,
-        guru: GURU.nama,
-        mapel,
-        kelas,
-        materi,
-        nama_siswa: n,
-        school_id: GURU.schoolId,
-        status: document.querySelector(`input[name="abs-${i}"]:checked`).value
-    }));
+const {data}=await _supabase
+.from('data')
+.select('*')
+.eq('kelas',kelas)
+.eq('school_id',GURU.schoolId);
 
-    loading(true);
+STUDENTS=data.map(x=>x.nama_siswa);
 
-    const { error } = await _supabase
-        .from('jurnal')
-        .insert(data);
+let h='';
 
-    loading(false);
+if(type==='jurnal'){
 
-    if(error) {
-        alert(error.message);
-    } else {
-        alert('Jurnal berhasil disimpan');
-        location.reload();
-    }
+STUDENTS.forEach((n,i)=>{
+
+h+=`
+<div class="st-row">
+<span>${n}</span>
+
+<div class="radio-group">
+
+${['H','S','I','A'].map(v=>`
+
+<label>
+<input type="radio" name="abs-${i}" value="${v}" ${v==='H'?'checked':''}>
+<div class="radio-box">${v}</div>
+</label>
+
+`).join('')}
+
+</div>
+</div>
+`;
+
+});
+
+document.getElementById('list-jurnal').innerHTML=h;
+document.getElementById('btn-jurnal').style.display='block';
+
+}else{
+
+STUDENTS.forEach((n,i)=>{
+
+h+=`
+<div class="st-row">
+<span>${n}</span>
+<input type="number" id="nil-${i}" style="width:90px" placeholder="0-100">
+</div>
+`;
+
+});
+
+document.getElementById('list-nilai').innerHTML=h;
+document.getElementById('btn-nilai').style.display='block';
+
 }
 
-async function saveNilai() {
-
-    const tanggal = new Date().toISOString().split('T')[0];
-    const mapel = document.getElementById('mapel-n').value;
-    const kelas = document.getElementById('kelas-n').value;
-    const jenisNilai = document.getElementById('jenis-nilai').value;
-
-    loading(true);
-
-    for(let i = 0; i < STUDENTS.length; i++) {
-
-        const obj = {
-            tanggal,
-            guru: GURU.nama,
-            mapel,
-            kelas,
-            siswa: STUDENTS[i],
-            school_id: GURU.schoolId
-        };
-
-        obj[jenisNilai] = document.getElementById(`nil-${i}`).value || 0;
-
-        await _supabase
-            .from('nilai')
-            .insert([obj]);
-    }
-
-    loading(false);
-
-    alert('Nilai berhasil disimpan');
-
-    location.reload();
 }
 
-async function loadLaporan() {
+async function saveJurnal(){
 
-    const tipe = document.getElementById('tipe-laporan').value;
+const tanggal=document.getElementById('tgl').value;
+const mapel=document.getElementById('mapel').value;
+const kelas=document.getElementById('kelas').value;
+const materi=document.getElementById('materi').value;
 
-    loading(true);
+const data=STUDENTS.map((n,i)=>({
+tanggal,
+guru:GURU.nama,
+mapel,
+kelas,
+materi,
+nama_siswa:n,
+school_id:GURU.schoolId,
+status:document.querySelector(`input[name="abs-${i}"]:checked`).value
+}));
 
-    const { data } = await _supabase
-        .from(tipe)
-        .select('*')
-        .eq('school_id', GURU.schoolId)
-        .order('id', {ascending:false})
-        .limit(100);
+const {error}=await _supabase
+.from('jurnal')
+.insert(data);
 
-    loading(false);
-
-    let h = '';
-
-    data.forEach(d => {
-
-        if(tipe === 'jurnal') {
-
-            h += `
-            <div class="log-item">
-                <div class="log-info">${d.tanggal} | ${d.kelas}</div>
-                <div class="log-main">${d.nama_siswa} (${d.status})</div>
-                <div class="log-info">${d.mapel} - ${d.materi}</div>
-            </div>`;
-
-        } else {
-
-            h += `
-            <div class="log-item">
-                <div class="log-info">${d.kelas}</div>
-                <div class="log-main">${d.siswa}</div>
-                <div class="log-info">
-                    S1:${d.s1 || '-'} |
-                    S2:${d.s2 || '-'} |
-                    S3:${d.s3 || '-'} |
-                    S4:${d.s4 || '-'}
-                </div>
-            </div>`;
-        }
-    });
-
-    document.getElementById('display-laporan').innerHTML = h;
+if(error){
+alert(error.message);
+}else{
+alert('Jurnal berhasil disimpan');
 }
 
-async function exportExcel() {
-
-    const tipe = document.getElementById('tipe-laporan').value;
-
-    const { data } = await _supabase
-        .from(tipe)
-        .select('*')
-        .eq('school_id', GURU.schoolId);
-
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-
-    XLSX.utils.book_append_sheet(wb, ws, 'Data');
-
-    XLSX.writeFile(wb, `MaDiGu_${tipe}.xlsx`);
 }
 
-function switchTab(t) {
+async function saveNilai(){
 
-    document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active-nav'));
+const tanggal=new Date().toISOString().split('T')[0];
+const mapel=document.getElementById('mapel-n').value;
+const kelas=document.getElementById('kelas-n').value;
+const jenis=document.getElementById('jenis-nilai').value;
 
-    document.getElementById(t === 'login' ? 'login-screen' : 'app-screen').classList.add('active');
+for(let i=0;i<STUDENTS.length;i++){
 
-    if(t !== 'login') {
-        document.getElementById('tab-'+t).classList.add('active');
+const obj={
+tanggal,
+guru:GURU.nama,
+mapel,
+kelas,
+siswa:STUDENTS[i],
+school_id:GURU.schoolId
+};
 
-        const nav = document.getElementById('n-'+t);
-        if(nav) nav.classList.add('active-nav');
-    }
+obj[jenis]=document.getElementById(`nil-${i}`).value || 0;
+
+await _supabase
+.from('nilai')
+.insert([obj]);
+
 }
 
-function loading(show) {
-    document.getElementById('loading').style.display = show ? 'flex' : 'none';
+alert('Nilai berhasil disimpan');
+
 }
 
-function logout() {
-    localStorage.clear();
-    location.reload();
+async function loadLaporan(){
+
+const tipe=document.getElementById('tipe-laporan').value;
+
+const {data}=await _supabase
+.from(tipe)
+.select('*')
+.eq('school_id',GURU.schoolId)
+.order('id',{ascending:false})
+.limit(100);
+
+let h='';
+
+data.forEach(d=>{
+
+h+=`
+<div class="card">
+<b>${d.kelas}</b><br>
+${d.nama_siswa || d.siswa}
+</div>
+`;
+
+});
+
+document.getElementById('display-laporan').innerHTML=h;
+
+}
+
+async function exportExcel(){
+
+const tipe=document.getElementById('tipe-laporan').value;
+
+const {data}=await _supabase
+.from(tipe)
+.select('*')
+.eq('school_id',GURU.schoolId);
+
+const ws=XLSX.utils.json_to_sheet(data);
+const wb=XLSX.utils.book_new();
+
+XLSX.utils.book_append_sheet(wb,ws,'Data');
+
+XLSX.writeFile(wb,`MaDiGu_${tipe}.xlsx`);
+
+}
+
+function switchTab(t){
+
+document.querySelectorAll('.tab-content')
+.forEach(x=>x.classList.remove('active'));
+
+document.querySelectorAll('.nav-btn')
+.forEach(x=>x.classList.remove('active-nav'));
+
+document.getElementById(
+t==='login'?'login-screen':'app-screen'
+).classList.add('active');
+
+if(t!=='login'){
+document.getElementById('tab-'+t).classList.add('active');
+document.getElementById('n-'+t).classList.add('active-nav');
+}
+
+}
+
+function logout(){
+localStorage.clear();
+location.reload();
 }
 
 </script>
